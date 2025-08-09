@@ -97,7 +97,7 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
     // Update rocket position and rotation based on telemetry
     if (!telemetry || !rocketRef.current) return;
 
-    const { position, velocity, orientation } = telemetry;
+    const { position, orientation } = telemetry;
 
     // Update rocket position
     rocketRef.current.position.set(position.x, position.y, position.z);
