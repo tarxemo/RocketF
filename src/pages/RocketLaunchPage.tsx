@@ -28,8 +28,8 @@ const RocketLaunchPage: React.FC = () => {
     }
   };
 
-  
-  //funciton to stop the rocket via Api url sending false boolean
+
+  //funciton to stop the rocket via Api url sending false boolean not working
   const stopRocket = async () => {
     try {
       const response = await fetch('https://api.example.com/step-rocket', {
