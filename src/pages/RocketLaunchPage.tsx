@@ -5,8 +5,47 @@ const RocketLaunchPage: React.FC = () => {
   const navigate = useNavigate();
   const [isLaunching, setIsLaunching] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(10);
   const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
+
+
+  //function to start the rocket via Api url sending true boolean
+  const startRocket = async () => {
+    try {
+      const response = await fetch('https://api.example.com/start-rocket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ launch: true })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to start rocket');
+      }
+      console.log('Rocket started successfully');
+    } catch (error) {
+      console.error('Error starting rocket:', error);
+    }
+  };
+
+  //funciton to stop the rocket via Api url sending false boolean
+  const stopRocket = async () => {
+    try {
+      const response = await fetch('https://api.example.com/step-rocket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ launch: false })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to step rocket');
+      }
+      console.log('Rocket stepped successfully');
+    } catch (error) {
+      console.error('Error stepping rocket:', error);
+    }
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -17,6 +56,7 @@ const RocketLaunchPage: React.FC = () => {
     } else if (showCountdown && countdown === 0) {
       setIsLaunching(true);
       setShowCountdown(false);
+      startRocket();
       // Generate particles for launch effect
       const newParticles = Array.from({ length: 20 }, (_, i) => ({
         id: i,
@@ -30,6 +70,7 @@ const RocketLaunchPage: React.FC = () => {
         setIsLaunching(false);
         setParticles([]);
         setCountdown(3);
+
         navigate('/rocket-controls');
       }, 4000);
     }
@@ -141,6 +182,47 @@ const RocketLaunchPage: React.FC = () => {
             <>
               <span className="animate-bounce">🚀</span>
               LAUNCH ROCKET
+            </>
+          )}
+        </span>
+      </button>
+
+      <button
+        onClick={() => {
+          if (isLaunching || showCountdown) {
+            setIsLaunching(false);
+            setShowCountdown(false);
+            setCountdown(10);
+            stopRocket();
+          }
+        }}
+        disabled={!isLaunching && !showCountdown}
+        className={`
+          mt-4 px-8 py-4 text-xl font-bold text-white rounded-full
+          transition-all duration-300 transform
+          ${!isLaunching && ! showCountdown  
+            ? 'bg-gray-600 cursor-not-allowed scale-95'
+            : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 hover:scale-110 hover:shadow-2xl active:scale-95'
+          }
+          shadow-lg border-4 border-white/20
+          relative overflow-hidden
+        `}
+      >
+        <span className="relative z-10 flex items-center gap-3">
+          {isLaunching ? (  
+            <>
+              <span className="animate-spin">🛑</span>
+              STOP LAUNCH
+            </>
+          ) : showCountdown ? (
+            <>
+              <span className="animate-pulse">⏳</span>
+              CANCEL COUNTDOWN
+            </>
+          ) : (
+            <>
+              <span className="animate-bounce">🚫</span>
+              RESET ROCKET
             </>
           )}
         </span>
