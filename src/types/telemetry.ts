@@ -55,6 +55,21 @@ export interface AvionicsData {
   memoryUsage: number; // 0-1
 }
 
+export interface MissionPhase {
+  name: string;
+  startTime: number;
+  endTime: number;
+  description: string;
+}
+
+export interface OrbitalParameters {
+  targetApogee: number; // meters
+  currentApogee: number; // meters
+  perigee: number; // meters
+  inclination: number; // degrees
+  eccentricity: number;
+}
+
 export interface TelemetryData {
   timestamp: number; // seconds since launch
   maxSimulationTime: number;
@@ -78,4 +93,6 @@ export interface TelemetryData {
     externalPressure: number; // Pa
   };
   trajectoryHistory: Vector3D[];
+  missionPhase: MissionPhase;
+  orbitalParameters: OrbitalParameters;
 }
