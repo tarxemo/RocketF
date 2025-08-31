@@ -57,9 +57,9 @@ const SimulationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white">
       {/* Mission Control Header */}
-      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-4">
+      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-4 sticky top-0 z-30">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-3">
@@ -109,55 +109,57 @@ const SimulationPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-12 gap-4 p-4 h-[calc(100vh-120px)]">
-        {/* Left Panel - 3D Visualization */}
-        <div className="col-span-5 space-y-4">
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 h-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-cyan-300">VEHICLE VISUALIZATION</h2>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-400">TRACKING</span>
+      {/* Main Dashboard Grid - Made scrollable with proper padding */}
+      <div className="pb-32 overflow-y-auto">
+        <div className="grid grid-cols-12 gap-4 p-4 min-h-[calc(100vh-200px)]">
+          {/* Left Panel - 3D Visualization */}
+          <div className="col-span-5 space-y-4">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 h-[600px]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-cyan-300">VEHICLE VISUALIZATION</h2>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-400">TRACKING</span>
+                </div>
+              </div>
+              <div className="h-[calc(100%-60px)] rounded-lg overflow-hidden">
+                <Rocket3DViewer telemetry={telemetry} />
               </div>
             </div>
-            <div className="h-[calc(100%-60px)] rounded-lg overflow-hidden">
-              <Rocket3DViewer telemetry={telemetry} />
-            </div>
           </div>
-        </div>
-        
-        {/* Center Panel - Telemetry Dashboard */}
-        <div className="col-span-4 space-y-4">
-          <TelemetryDashboard data={telemetry} />
-        </div>
-        
-        {/* Right Panel - Control Systems */}
-        <div className="col-span-3 space-y-4">
-          <ControlPanel 
-            telemetry={telemetry}
-            onCommand={(command) => simulationRef.current?.sendCommand(command)}
-          />
           
-          {/* Emergency System */}
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
-            <EmergencySystem 
-              telemetryData={telemetry}
-              onAbort={handleAbort}
-              onEmergencyAction={handleEmergencyAction}
-              isLaunching={isSimulating}
+          {/* Center Panel - Telemetry Dashboard */}
+          <div className="col-span-4 space-y-4">
+            <TelemetryDashboard data={telemetry} />
+          </div>
+          
+          {/* Right Panel - Control Systems */}
+          <div className="col-span-3 space-y-4">
+            <ControlPanel 
+              telemetry={telemetry}
+              onCommand={(command) => simulationRef.current?.sendCommand(command)}
             />
-          </div>
-          
-          {/* Alert System */}
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
-            <AlertSystem telemetry={telemetry} />
+            
+            {/* Emergency System */}
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
+              <EmergencySystem 
+                telemetryData={telemetry}
+                onAbort={handleAbort}
+                onEmergencyAction={handleEmergencyAction}
+                isLaunching={isSimulating}
+              />
+            </div>
+            
+            {/* Alert System */}
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
+              <AlertSystem telemetry={telemetry} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Timeline */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm border-t border-cyan-500/30 p-4">
+      {/* Bottom Timeline - Fixed at bottom with proper z-index */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-cyan-500/30 p-4 z-20">
         <TimeNavigation 
           currentTime={telemetry?.timestamp || 0}
           maxTime={telemetry?.maxSimulationTime || 0}

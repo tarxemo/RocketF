@@ -133,7 +133,7 @@ const RocketLaunchPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-auto">
       {/* Animated stars background */}
       <div className="absolute inset-0">
         {Array.from({ length: 200 }, (_, i) => (
@@ -176,8 +176,8 @@ const RocketLaunchPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center p-8">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-12 gap-8 h-full">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-8 pb-32">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-12 gap-8 min-h-[calc(100vh-200px)]">
           
           {/* Left Panel - Systems Status */}
           <div className="col-span-3 space-y-6">
