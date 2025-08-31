@@ -387,68 +387,69 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
       {/* 3D Viewport */}
       <div ref={mountRef} className="w-full h-full rounded-lg" />
       
-      {/* Camera Controls Overlay */}
-      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg p-3 space-y-2">
-        <div className="text-xs font-semibold text-cyan-300 mb-2">CAMERA VIEWS</div>
-        <div className="grid grid-cols-2 gap-2">
+      {/* Camera Controls Overlay - Compact for mobile */}
+      <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1">
+        <div className="text-xs font-semibold text-cyan-300 mb-1 hidden sm:block">CAMERA VIEWS</div>
+        <div className="grid grid-cols-3 sm:grid-cols-2 gap-1">
           {cameraViews.map((view) => (
             <button
               key={view.id}
               onClick={() => setCurrentView(view.id as CameraView)}
-              className={`p-2 rounded text-xs font-medium transition-all duration-200 ${
+              className={`p-1 sm:p-2 rounded text-xs font-medium transition-all duration-200 ${
                 currentView === view.id
                   ? 'bg-cyan-500 text-white shadow-lg'
                   : 'bg-slate-700/50 text-cyan-300 hover:bg-slate-600/50'
               }`}
               title={view.description}
             >
-              <div className="flex items-center space-x-1">
-                <span className="text-sm">{view.icon}</span>
-                <span>{view.name}</span>
+              <div className="flex items-center justify-center sm:space-x-1">
+                <span className="text-xs sm:text-sm">{view.icon}</span>
+                <span className="hidden sm:inline text-xs">{view.name}</span>
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Telemetry Overlay */}
+      {/* Telemetry Overlay - Compact for mobile */}
       {telemetry && (
-        <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg p-3 space-y-2 text-xs">
-          <div className="font-semibold text-cyan-300">VEHICLE STATUS</div>
+        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1 text-xs max-w-[120px] sm:max-w-none">
+          <div className="font-semibold text-cyan-300 text-xs hidden sm:block">VEHICLE STATUS</div>
           <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-cyan-400">Altitude:</span>
-              <span className="text-white">{(telemetry.position.y / 1000).toFixed(1)} km</span>
+            <div className="flex justify-between text-xs">
+              <span className="text-cyan-400">Alt:</span>
+              <span className="text-white">{(telemetry.position.y / 1000).toFixed(1)}km</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-cyan-400">Velocity:</span>
-              <span className="text-white">{telemetry.velocity.total.toFixed(0)} m/s</span>
+            <div className="flex justify-between text-xs">
+              <span className="text-cyan-400">Vel:</span>
+              <span className="text-white">{telemetry.velocity.total.toFixed(0)}m/s</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-cyan-400">Engine:</span>
-              <span className={`font-semibold ${
+            <div className="flex justify-between text-xs">
+              <span className="text-cyan-400">Eng:</span>
+              <span className={`font-semibold text-xs ${
                 telemetry.engine.status === 'RUNNING' ? 'text-green-400' : 
                 telemetry.engine.status === 'OFF' ? 'text-gray-400' : 'text-red-400'
               }`}>
-                {telemetry.engine.status}
+                {telemetry.engine.status === 'RUNNING' ? '🔥' : telemetry.engine.status === 'OFF' ? '⚫' : '❌'}
               </span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Current View Indicator */}
-      <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
-        <div className="flex items-center space-x-2 text-xs">
-          <span className="text-cyan-300">ACTIVE VIEW:</span>
-          <span className="text-white font-semibold">
-            {cameraViews.find(v => v.id === currentView)?.icon} {cameraViews.find(v => v.id === currentView)?.name.toUpperCase()}
+      {/* Current View Indicator - Simplified for mobile */}
+      <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1">
+        <div className="flex items-center space-x-1 text-xs">
+          <span className="text-cyan-300 hidden sm:inline">VIEW:</span>
+          <span className="text-white font-semibold text-xs">
+            {cameraViews.find(v => v.id === currentView)?.icon} 
+            <span className="hidden sm:inline ml-1">{cameraViews.find(v => v.id === currentView)?.name.toUpperCase()}</span>
           </span>
         </div>
       </div>
 
-      {/* Controls Help */}
-      <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-cyan-300">
+      {/* Controls Help - Hidden on mobile to save space */}
+      <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 text-xs text-cyan-300 hidden md:block">
         <div>Mouse: Rotate • Wheel: Zoom • Right-click: Pan</div>
       </div>
     </div>

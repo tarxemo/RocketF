@@ -150,7 +150,7 @@ const RocketLaunchPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Mission Control Header */}
+      {/* Mission Control Header - Now scrollable, not fixed */}
       <div className="relative z-10 bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-2 md:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
@@ -176,8 +176,8 @@ const RocketLaunchPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center p-2 md:p-8 pb-20 md:pb-32">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-8 min-h-[calc(100vh-140px)] md:min-h-[calc(100vh-200px)]">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 md:p-8">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-8 min-h-[calc(100vh-200px)]">
           
           {/* Left Panel - Systems Status */}
           <div className="lg:col-span-3 space-y-4 md:space-y-6">

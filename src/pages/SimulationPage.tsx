@@ -58,8 +58,8 @@ const SimulationPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white">
-      {/* Mission Control Header - Optimized for mobile space */}
-      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-2 md:p-4 sticky top-0 z-30">
+      {/* Mission Control Header - Now scrollable, not fixed */}
+      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-2 md:p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 md:space-x-6">
             <div className="flex items-center space-x-2 md:space-x-3">
@@ -118,12 +118,12 @@ const SimulationPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Dashboard Grid - Maximized content area */}
-      <div className="pb-16 md:pb-32 overflow-y-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 md:gap-4 p-2 md:p-4 min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-200px)]">
-          {/* Left Panel - 3D Visualization */}
-          <div className="lg:col-span-5 space-y-2 md:space-y-4 order-2 lg:order-1">
-            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-2 md:p-4 h-48 md:h-[600px]">
+      {/* Main Dashboard Grid - No bottom padding needed since footer is not fixed */}
+      <div className="overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 md:gap-4 p-2 md:p-4 min-h-[calc(100vh-200px)]">
+          {/* Left Panel - 3D Visualization - Prioritized on mobile */}
+          <div className="lg:col-span-5 space-y-2 md:space-y-4 order-1">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-2 md:p-4 h-64 sm:h-80 md:h-[600px]">
               <div className="flex items-center justify-between mb-2 md:mb-4">
                 <h2 className="text-sm md:text-lg font-semibold text-cyan-300">VEHICLE VISUALIZATION</h2>
                 <div className="flex items-center space-x-1 md:space-x-2">
@@ -138,7 +138,7 @@ const SimulationPage: React.FC = () => {
           </div>
           
           {/* Center Panel - Telemetry Dashboard */}
-          <div className="lg:col-span-4 space-y-2 md:space-y-4 order-1 lg:order-2">
+          <div className="lg:col-span-4 space-y-2 md:space-y-4 order-2">
             <TelemetryDashboard data={telemetry} />
           </div>
           
@@ -167,8 +167,8 @@ const SimulationPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Timeline - Compact footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-cyan-500/30 p-1 md:p-4 z-20">
+      {/* Bottom Timeline - Now scrollable footer at bottom of content */}
+      <div className="bg-black/80 backdrop-blur-sm border-t border-cyan-500/30 p-1 md:p-4">
         <TimeNavigation 
           currentTime={telemetry?.timestamp || 0}
           maxTime={telemetry?.maxSimulationTime || 0}
