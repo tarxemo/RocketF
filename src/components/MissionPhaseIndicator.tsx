@@ -1,9 +1,7 @@
 // src/components/MissionPhaseIndicator.tsx
 import React from 'react';
-import type { MissionPhase } from '../types/telemetry';
-
 interface MissionPhaseIndicatorProps {
-  phase?: MissionPhase;
+  phase?: string;
 }
 
 const MissionPhaseIndicator: React.FC<MissionPhaseIndicatorProps> = ({ phase }) => {
@@ -43,7 +41,7 @@ const MissionPhaseIndicator: React.FC<MissionPhaseIndicatorProps> = ({ phase }) 
     }
   };
 
-  const getPhaseIcon = (phaseName: string) => {
+  const getPhaseInfo = (phaseName: string) => {
     switch (phaseName.toLowerCase()) {
       case 'pre-launch':
         return '🔧';
@@ -70,8 +68,8 @@ const MissionPhaseIndicator: React.FC<MissionPhaseIndicatorProps> = ({ phase }) 
     }
   };
 
-  const colorClasses = getPhaseColor(phase.name);
-  const icon = getPhaseIcon(phase.name);
+  const colorClasses = getPhaseColor(phase);
+  const icon = getPhaseInfo(phase);
 
   return (
     <div className={`flex items-center space-x-3 rounded-lg px-4 py-2 border ${colorClasses}`}>
@@ -81,10 +79,10 @@ const MissionPhaseIndicator: React.FC<MissionPhaseIndicatorProps> = ({ phase }) 
       </div>
       <div>
         <div className="text-sm font-semibold uppercase tracking-wide">
-          {phase.name}
+          {phase}
         </div>
         <div className="text-xs opacity-70">
-          {phase.description}
+          Mission Phase Active
         </div>
       </div>
     </div>

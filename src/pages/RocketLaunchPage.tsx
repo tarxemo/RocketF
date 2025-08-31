@@ -7,7 +7,7 @@ const RocketLaunchPage: React.FC = () => {
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
-  const [systemsCheck, setSystemsCheck] = useState({
+  const [systemsCheck] = useState({
     propulsion: 'GO',
     avionics: 'GO', 
     guidance: 'GO',
@@ -69,7 +69,7 @@ const RocketLaunchPage: React.FC = () => {
           const nextCount = prev - 1;
           
           // Add launch sequence events based on countdown
-          const sequenceEvents = {
+          const sequenceEvents: Record<number, string> = {
             10: "T-10: Launch sequence initiated",
             9: "T-9: Engine chill initiated", 
             8: "T-8: Strongback retract initiated",

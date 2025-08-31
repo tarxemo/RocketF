@@ -93,6 +93,6 @@ export interface TelemetryData {
     externalPressure: number; // Pa
   };
   trajectoryHistory: Vector3D[];
-  missionPhase: MissionPhase;
+  missionPhase: string;
   orbitalParameters: OrbitalParameters;
 }

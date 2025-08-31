@@ -10,6 +10,7 @@ interface RocketStage {
   name: string;
   dryMass: number; // kg
   propellantMass: number; // kg
+  mass: number; // kg (total mass)
   thrust: number; // N
   specificImpulse: number; // seconds
   burnTime: number; // seconds
@@ -39,12 +40,26 @@ export class RocketSimulation {
   private trajectoryHistory: Array<{x: number, y: number, z: number}> = [];
   private options: SimulationOptions;
   
+  // Simulation state
+  private state = {
+    engineStatus: 'off' as 'off' | 'nominal' | 'shutdown' | 'backup',
+    missionPhase: 'pre-launch',
+    currentStage: 1,
+    mass: 0,
+    thrust: 0,
+    fuel: 0,
+    payloadDeployed: false,
+    acceleration: { x: 0, y: 0, z: 0 },
+    orientation: { pitch: 0, yaw: 0, roll: 0 }
+  };
+  
   // Rocket configuration
   private stages: RocketStage[] = [
     {
       name: "First Stage",
       dryMass: 22200, // kg (Falcon 9 first stage)
       propellantMass: 395700, // kg
+      mass: 417900, // kg (total mass)
       thrust: 7607000, // N (9 Merlin engines)
       specificImpulse: 282, // seconds (sea level)
       burnTime: 162, // seconds
@@ -54,7 +69,8 @@ export class RocketSimulation {
       name: "Second Stage",
       dryMass: 4000, // kg
       propellantMass: 107500, // kg
-      thrust: 934000, // N (1 Merlin Vacuum)
+      mass: 111500, // kg (total mass)
+      thrust: 934000, // N (1 Merlin Vacuum engine)
       specificImpulse: 348, // seconds (vacuum)
       burnTime: 397, // seconds
       separated: false
@@ -151,7 +167,7 @@ export class RocketSimulation {
     this.state.missionPhase = 'abort';
     this.state.thrust = 0;
     this.state.acceleration = { x: 0, y: -9.81, z: 0 }; // Only gravity
-    this.isRunning = false;
+    this.running = false;
     console.log('Mission aborted');
   }
 
@@ -214,7 +230,7 @@ export class RocketSimulation {
     const atmosphere = this.calculateAtmosphere(rocketState.altitude);
     
     // Calculate current stage and engine status
-    const engineData = this.calculateEngineData(t, rocketState);
+    const engineData = this.calculateEngineData(t);
     
     // Calculate orbital parameters
     const orbitalData = this.calculateOrbitalParameters(rocketState);
@@ -281,7 +297,7 @@ export class RocketSimulation {
         externalPressure: atmosphere.pressure
       },
       trajectoryHistory: this.trajectoryHistory,
-      missionPhase: currentPhase,
+      missionPhase: currentPhase.name,
       orbitalParameters: orbitalData
     };
     
@@ -314,7 +330,7 @@ export class RocketSimulation {
     // Simplified physics integration for demonstration
     // In reality, this would use numerical integration (RK4, etc.)
     if (time > 0) {
-      const currentStage = this.getCurrentStage(time);
+      // const currentStage = this.getCurrentStage(time);
       const thrust = this.getCurrentThrust(time);
       const atmosphere = this.calculateAtmosphere(altitude);
       
@@ -361,25 +377,21 @@ export class RocketSimulation {
   }
 
   private calculateAtmosphere(altitude: number): AtmosphericData {
-    // Standard atmosphere model
-    const seaLevelPressure = 101325; // Pa
-    const seaLevelTemperature = 288.15; // K
-    const seaLevelDensity = 1.225; // kg/m³
-    const scaleHeight = 8500; // m
+    const scaleHeight = 8400; // meters
     
-    const pressure = seaLevelPressure * Math.exp(-altitude / scaleHeight);
-    const temperature = seaLevelTemperature - 0.0065 * Math.min(altitude, 11000);
-    const density = pressure / (287.05 * temperature);
+    const density = 1.225 * Math.exp(-altitude / scaleHeight); // kg/m³
+    const pressure = 101325 * Math.exp(-altitude / scaleHeight); // Pa
+    const temperature = 288.15 - 0.0065 * altitude; // K (simplified linear model)
     
     return {
+      density,
       pressure,
       temperature,
-      density,
-      windSpeed: Math.random() * 20 // Simplified wind model
+      windSpeed: 0 // Simplified - no wind
     };
   }
 
-  private calculateEngineData(time: number, rocketState: any) {
+  private calculateEngineData(time: number) {
     const currentStage = this.getCurrentStage(time);
     const stage = this.stages[currentStage];
     
