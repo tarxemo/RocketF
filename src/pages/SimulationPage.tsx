@@ -59,15 +59,15 @@ const SimulationPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white">
       {/* Mission Control Header */}
-      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-4 sticky top-0 z-30">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold">🚀</span>
+      <div className="bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-3 md:p-4 sticky top-0 z-30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-0">
+          <div className="flex items-center space-x-4 md:space-x-6">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-xs md:text-sm font-bold">🚀</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <h1 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   MISSION CONTROL
                 </h1>
                 <p className="text-xs text-cyan-300/70">Falcon Heavy • Demo Mission</p>
@@ -75,17 +75,19 @@ const SimulationPage: React.FC = () => {
             </div>
             
             {/* Mission Phase Indicator */}
-            <MissionPhaseIndicator phase={telemetry?.missionPhase} />
+            <div className="hidden sm:block">
+              <MissionPhaseIndicator phase={telemetry?.missionPhase} />
+            </div>
           </div>
           
           {/* Simulation Controls */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-slate-800/50 rounded-lg p-2">
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="flex items-center space-x-1 md:space-x-2 bg-slate-800/50 rounded-lg p-1 md:p-2">
               <span className="text-xs text-cyan-300">SPEED:</span>
               <select 
                 value={simulationSpeed}
                 onChange={(e) => handleSpeedChange(Number(e.target.value))}
-                className="bg-slate-700 text-cyan-300 text-xs rounded px-2 py-1 border border-cyan-500/30 focus:border-cyan-400 focus:outline-none"
+                className="bg-slate-700 text-cyan-300 text-xs rounded px-1 md:px-2 py-1 border border-cyan-500/30 focus:border-cyan-400 focus:outline-none"
               >
                 <option value={0.5}>0.5x</option>
                 <option value={1}>1x</option>
@@ -97,7 +99,7 @@ const SimulationPage: React.FC = () => {
             
             <button 
               onClick={isSimulating ? handlePauseSimulation : handleStartSimulation}
-              className={`px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-300 ${
+              className={`px-3 md:px-6 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all duration-300 ${
                 isSimulating 
                   ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25' 
                   : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25'
@@ -107,41 +109,46 @@ const SimulationPage: React.FC = () => {
             </button>
           </div>
         </div>
+        
+        {/* Mobile Mission Phase Indicator */}
+        <div className="sm:hidden mt-3 flex justify-center">
+          <MissionPhaseIndicator phase={telemetry?.missionPhase} />
+        </div>
       </div>
 
       {/* Main Dashboard Grid - Made scrollable with proper padding */}
-      <div className="pb-32 overflow-y-auto">
-        <div className="grid grid-cols-12 gap-4 p-4 min-h-[calc(100vh-200px)]">
+      <div className="pb-20 md:pb-32 overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-4 p-3 md:p-4 min-h-[calc(100vh-200px)]">
           {/* Left Panel - 3D Visualization */}
-          <div className="col-span-5 space-y-4">
-            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 h-[600px]">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-cyan-300">VEHICLE VISUALIZATION</h2>
+          <div className="lg:col-span-5 space-y-3 md:space-y-4 order-2 lg:order-1">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4 h-64 md:h-[600px]">
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <h2 className="text-base md:text-lg font-semibold text-cyan-300">VEHICLE VISUALIZATION</h2>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   <span className="text-xs text-green-400">TRACKING</span>
                 </div>
               </div>
-              <div className="h-[calc(100%-60px)] rounded-lg overflow-hidden">
+              <div className="h-[calc(100%-48px)] md:h-[calc(100%-60px)] rounded-lg overflow-hidden">
                 <Rocket3DViewer telemetry={telemetry} />
               </div>
             </div>
           </div>
           
           {/* Center Panel - Telemetry Dashboard */}
-          <div className="col-span-4 space-y-4">
+          <div className="lg:col-span-4 space-y-3 md:space-y-4 order-1 lg:order-2">
             <TelemetryDashboard data={telemetry} />
           </div>
           
           {/* Right Panel - Control Systems */}
-          <div className="col-span-3 space-y-4">
+          <div className="lg:col-span-3 space-y-3 md:space-y-4 order-3">
             <ControlPanel 
               telemetry={telemetry}
               onCommand={(command) => simulationRef.current?.sendCommand(command)}
             />
             
             {/* Emergency System */}
-            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
               <EmergencySystem 
                 telemetryData={telemetry}
                 onAbort={handleAbort}
@@ -151,7 +158,7 @@ const SimulationPage: React.FC = () => {
             </div>
             
             {/* Alert System */}
-            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
               <AlertSystem telemetry={telemetry} />
             </div>
           </div>
@@ -159,7 +166,7 @@ const SimulationPage: React.FC = () => {
       </div>
 
       {/* Bottom Timeline - Fixed at bottom with proper z-index */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-cyan-500/30 p-4 z-20">
+      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-cyan-500/30 p-2 md:p-4 z-20">
         <TimeNavigation 
           currentTime={telemetry?.timestamp || 0}
           maxTime={telemetry?.maxSimulationTime || 0}

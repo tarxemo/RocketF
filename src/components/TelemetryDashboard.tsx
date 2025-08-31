@@ -46,32 +46,32 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
   };
 
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-3 md:space-y-4 h-full">
       {/* Quick Stats Panel */}
-      <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4">
-        <h2 className="text-lg font-semibold text-cyan-300 mb-4 flex items-center">
+      <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
+        <h2 className="text-base md:text-lg font-semibold text-cyan-300 mb-3 md:mb-4 flex items-center">
           <span className="mr-2">📊</span>
           TELEMETRY OVERVIEW
         </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-slate-800/50 rounded-lg p-3">
+        <div className="grid grid-cols-2 gap-2 md:gap-4">
+          <div className="bg-slate-800/50 rounded-lg p-2 md:p-3">
             <div className="text-xs text-cyan-400 uppercase tracking-wide">Altitude</div>
-            <div className="text-xl font-bold text-white">{formatValue(data.position.y)} m</div>
+            <div className="text-lg md:text-xl font-bold text-white">{formatValue(data.position.y)} m</div>
             <div className="text-xs text-cyan-300/60">Above Sea Level</div>
           </div>
-          <div className="bg-slate-800/50 rounded-lg p-3">
+          <div className="bg-slate-800/50 rounded-lg p-2 md:p-3">
             <div className="text-xs text-cyan-400 uppercase tracking-wide">Velocity</div>
-            <div className="text-xl font-bold text-white">{formatValue(data.velocity.total)} m/s</div>
+            <div className="text-lg md:text-xl font-bold text-white">{formatValue(data.velocity.total)} m/s</div>
             <div className="text-xs text-cyan-300/60">Ground Speed</div>
           </div>
-          <div className="bg-slate-800/50 rounded-lg p-3">
+          <div className="bg-slate-800/50 rounded-lg p-2 md:p-3">
             <div className="text-xs text-cyan-400 uppercase tracking-wide">Acceleration</div>
-            <div className="text-xl font-bold text-white">{formatValue(data.acceleration.total, 1)} G</div>
+            <div className="text-lg md:text-xl font-bold text-white">{formatValue(data.acceleration.total, 1)} G</div>
             <div className="text-xs text-cyan-300/60">Current G-Force</div>
           </div>
-          <div className="bg-slate-800/50 rounded-lg p-3">
+          <div className="bg-slate-800/50 rounded-lg p-2 md:p-3">
             <div className="text-xs text-cyan-400 uppercase tracking-wide">Mission Time</div>
-            <div className="text-xl font-bold text-white">T+{Math.floor(data.timestamp / 60)}:{(data.timestamp % 60).toFixed(0).padStart(2, '0')}</div>
+            <div className="text-lg md:text-xl font-bold text-white">T+{Math.floor(data.timestamp / 60)}:{(data.timestamp % 60).toFixed(0).padStart(2, '0')}</div>
             <div className="text-xs text-cyan-300/60">Elapsed Time</div>
           </div>
         </div>
@@ -79,11 +79,11 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
 
       {/* Tabbed Interface */}
       <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 flex-1">
-        <div className="flex border-b border-cyan-500/20">
+        <div className="flex border-b border-cyan-500/20 overflow-x-auto">
           {['flight', 'engine', 'navigation'].map((tab) => (
             <button
               key={tab}
-              className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-all duration-200 ${
+              className={`px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold uppercase tracking-wide transition-all duration-200 whitespace-nowrap ${
                 activeTab === tab
                   ? 'text-cyan-300 border-b-2 border-cyan-400 bg-cyan-400/10'
                   : 'text-cyan-500 hover:text-cyan-300 hover:bg-cyan-400/5'
@@ -95,13 +95,13 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
           ))}
         </div>
         
-        <div className="p-4 h-[calc(100%-60px)] overflow-y-auto">
+        <div className="p-3 md:p-4 h-[calc(100%-50px)] md:h-[calc(100%-60px)] overflow-y-auto">
 
           {activeTab === 'flight' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Primary Flight Gauges */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Velocity" 
                     value={data.velocity.total} 
@@ -111,7 +111,7 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                     warningThreshold={7500} 
                   />
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Altitude" 
                     value={data.position.y} 
@@ -121,7 +121,7 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                     warningThreshold={180000} 
                   />
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Acceleration" 
                     value={data.acceleration.total} 
@@ -134,8 +134,8 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
               </div>
               
               {/* Attitude and Structural Data */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <h3 className="text-sm font-semibold text-cyan-300 mb-3">ATTITUDE</h3>
                   <AttitudeIndicator 
                     pitch={data.orientation.pitch}
@@ -143,7 +143,7 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                     yaw={data.orientation.yaw}
                   />
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <h3 className="text-sm font-semibold text-cyan-300 mb-3">STRUCTURAL</h3>
                   <div className="space-y-3">
                     <div>
@@ -183,12 +183,12 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
           )}
 
           {activeTab === 'engine' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Engine Status */}
-              <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-cyan-300">ENGINE STATUS</h3>
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(data.engine.status)} bg-current/20`}>
+                  <div className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(data.engine.status)} bg-current/20`}>
                     {data.engine.status}
                   </div>
                 </div>
@@ -201,8 +201,8 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
               </div>
               
               {/* Engine Metrics */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Chamber Pressure" 
                     value={data.engine.chamberPressure} 
@@ -212,7 +212,7 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                     warningThreshold={18} 
                   />
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Turbine Speed" 
                     value={data.engine.turbineSpeed} 
@@ -222,7 +222,7 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                     warningThreshold={45000} 
                   />
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4">
+                <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                   <Gauge 
                     title="Fuel Flow" 
                     value={data.engine.fuelFlowRate} 
@@ -235,9 +235,9 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
               </div>
               
               {/* Propellant Levels */}
-              <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <h3 className="text-sm font-semibold text-cyan-300 mb-4">PROPELLANT LEVELS</h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <div className="flex justify-between text-xs mb-2">
                       <span className="text-cyan-400">Fuel (RP-1)</span>
@@ -274,11 +274,11 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
           )}
 
           {activeTab === 'navigation' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Orbital Parameters */}
-              <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <h3 className="text-sm font-semibold text-cyan-300 mb-4">ORBITAL PARAMETERS</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-cyan-400 text-xs">Target Apogee:</span>
@@ -316,26 +316,26 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
               </div>
               
               {/* Position Data */}
-              <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <h3 className="text-sm font-semibold text-cyan-300 mb-4">POSITION DATA</h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                   <div className="text-center">
                     <div className="text-xs text-cyan-400 uppercase tracking-wide mb-1">Latitude</div>
-                    <div className="text-lg font-mono text-white">{data.position.lat.toFixed(6)}°</div>
+                    <div className="text-base md:text-lg font-mono text-white">{data.position.lat.toFixed(6)}°</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-cyan-400 uppercase tracking-wide mb-1">Longitude</div>
-                    <div className="text-lg font-mono text-white">{data.position.lon.toFixed(6)}°</div>
+                    <div className="text-base md:text-lg font-mono text-white">{data.position.lon.toFixed(6)}°</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-cyan-400 uppercase tracking-wide mb-1">Altitude</div>
-                    <div className="text-lg font-mono text-white">{formatValue(data.position.y)} m</div>
+                    <div className="text-base md:text-lg font-mono text-white">{formatValue(data.position.y)} m</div>
                   </div>
                 </div>
               </div>
               
               {/* Trajectory Chart */}
-              <div className="bg-slate-800/30 rounded-lg p-4">
+              <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <h3 className="text-sm font-semibold text-cyan-300 mb-4">TRAJECTORY PROFILE</h3>
                 <LineChart 
                   title="Altitude vs Time"
