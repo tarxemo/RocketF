@@ -44,34 +44,34 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
 
   return (
     <div className="w-full">
-      {/* Mission Phase and Time Display */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-3 md:mb-4 gap-3 md:gap-0">
-        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 md:space-x-4">
-          <div className="bg-slate-800/50 rounded-lg px-3 md:px-4 py-1 md:py-2">
-            <div className="text-xs text-cyan-400 uppercase tracking-wide">Mission Time</div>
-            <div className="text-lg md:text-2xl font-bold text-white font-mono">
+      {/* Mission Phase and Time Display - Ultra compact for mobile */}
+      <div className="flex items-center justify-between mb-1 md:mb-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="bg-slate-800/50 rounded px-2 md:px-4 py-0.5 md:py-2">
+            <div className="text-xs text-cyan-400 uppercase tracking-wide hidden md:block">Mission Time</div>
+            <div className="text-sm md:text-2xl font-bold text-white font-mono">
               T+{formatTime(currentTime)}
             </div>
           </div>
           
-          <div className="bg-slate-800/50 rounded-lg px-3 md:px-4 py-1 md:py-2">
-            <div className="text-xs text-cyan-400 uppercase tracking-wide">Current Phase</div>
-            <div className="text-sm md:text-lg font-semibold text-cyan-300">
+          <div className="bg-slate-800/50 rounded px-2 md:px-4 py-0.5 md:py-2">
+            <div className="text-xs text-cyan-400 uppercase tracking-wide hidden md:block">Current Phase</div>
+            <div className="text-xs md:text-lg font-semibold text-cyan-300">
               {getCurrentPhase()}
             </div>
           </div>
         </div>
         
-        <div className="text-center md:text-right">
-          <div className="text-xs text-cyan-400">Mission Duration</div>
-          <div className="text-base md:text-lg font-mono text-white">{formatTime(maxTime)}</div>
+        <div className="text-right">
+          <div className="text-xs text-cyan-400 hidden md:block">Mission Duration</div>
+          <div className="text-xs md:text-lg font-mono text-white">{formatTime(maxTime)}</div>
         </div>
       </div>
 
-      {/* Timeline Slider */}
+      {/* Timeline Slider - Compact version */}
       <div className="relative">
         {/* Background track */}
-        <div className="w-full h-2 bg-slate-700 rounded-full relative overflow-hidden">
+        <div className="w-full h-1.5 md:h-2 bg-slate-700 rounded-full relative overflow-hidden">
           {/* Progress bar */}
           <div 
             className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-300"
@@ -80,7 +80,7 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
           
           {/* Current position indicator */}
           <div 
-            className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-3 h-3 md:w-4 md:h-4 bg-white border-2 border-cyan-400 rounded-full shadow-lg transition-all duration-300"
+            className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 md:w-4 md:h-4 bg-white border-2 border-cyan-400 rounded-full shadow-lg transition-all duration-300"
             style={{ left: `${getProgressPercentage()}%` }}
           ></div>
         </div>
@@ -95,8 +95,8 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         />
         
-        {/* Milestone markers - hidden on mobile */}
-        <div className="relative mt-2 hidden sm:block">
+        {/* Milestone markers - hidden on mobile to save space */}
+        <div className="relative mt-2 hidden lg:block">
           {milestones.map((milestone, index) => {
             const position = getMilestonePosition(milestone.time);
             const isPassed = currentTime >= milestone.time;
@@ -139,47 +139,47 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
           })}
         </div>
         
-        {/* Mobile milestone indicators */}
-        <div className="sm:hidden mt-2">
+        {/* Mobile milestone indicators - Minimal */}
+        <div className="lg:hidden mt-1">
           <div className="flex justify-between text-xs">
-            <span className="text-cyan-400">T+00:00</span>
-            <span className="text-cyan-400">T+{formatTime(maxTime)}</span>
+            <span className="text-cyan-400">START</span>
+            <span className="text-cyan-400">END</span>
           </div>
         </div>
       </div>
       
-      {/* Timeline Controls */}
-      <div className="flex items-center justify-center space-x-2 md:space-x-4 mt-4 md:mt-6">
+      {/* Timeline Controls - Compact mobile version */}
+      <div className="flex items-center justify-center space-x-1 md:space-x-4 mt-1 md:mt-6">
         <button 
           onClick={() => onChange(0)}
-          className="px-2 md:px-3 py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
+          className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="hidden sm:inline">⏮️ START</span>
-          <span className="sm:hidden">⏮️</span>
+          <span className="md:hidden">⏮️</span>
+          <span className="hidden md:inline">⏮️ START</span>
         </button>
         
         <button 
           onClick={() => onChange(Math.max(0, currentTime - 60))}
-          className="px-2 md:px-3 py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
+          className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="hidden sm:inline">⏪ -1MIN</span>
-          <span className="sm:hidden">⏪</span>
+          <span className="md:hidden">⏪</span>
+          <span className="hidden md:inline">⏪ -1MIN</span>
         </button>
         
         <button 
           onClick={() => onChange(Math.min(maxTime, currentTime + 60))}
-          className="px-2 md:px-3 py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
+          className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="hidden sm:inline">⏩ +1MIN</span>
-          <span className="sm:hidden">⏩</span>
+          <span className="md:hidden">⏩</span>
+          <span className="hidden md:inline">⏩ +1MIN</span>
         </button>
         
         <button 
           onClick={() => onChange(maxTime)}
-          className="px-2 md:px-3 py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
+          className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="hidden sm:inline">⏭️ END</span>
-          <span className="sm:hidden">⏭️</span>
+          <span className="md:hidden">⏭️</span>
+          <span className="hidden md:inline">⏭️ END</span>
         </button>
       </div>
     </div>

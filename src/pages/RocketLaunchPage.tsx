@@ -151,33 +151,33 @@ const RocketLaunchPage: React.FC = () => {
       </div>
 
       {/* Mission Control Header */}
-      <div className="relative z-10 bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-4 md:p-6">
+      <div className="relative z-10 bg-black/40 backdrop-blur-sm border-b border-cyan-500/30 p-2 md:p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-4 md:space-x-6">
-              <div className="flex items-center space-x-3 md:space-x-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-xl md:text-2xl">🚀</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 md:space-x-6">
+              <div className="flex items-center space-x-2 md:space-x-4">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-lg md:text-2xl">🚀</span>
                 </div>
                 <div>
-                  <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                  <h1 className="text-base md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                     LAUNCH CONTROL
                   </h1>
-                  <p className="text-xs md:text-sm text-cyan-300/70">Falcon Heavy • Demo Mission • LC-39A</p>
+                  <p className="text-xs md:text-sm text-cyan-300/70 hidden sm:block">Falcon Heavy • Demo Mission • LC-39A</p>
                 </div>
               </div>
             </div>
             
-            <div className="text-center sm:text-right">
+            <div className="text-right">
               <div className="text-xs md:text-sm text-cyan-400">Kennedy Space Center</div>
-              <div className="text-xs text-cyan-300/60">Cape Canaveral, Florida</div>
+              <div className="text-xs text-cyan-300/60 hidden sm:block">Cape Canaveral, Florida</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8 pb-32">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 min-h-[calc(100vh-200px)]">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 md:p-8 pb-20 md:pb-32">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-8 min-h-[calc(100vh-140px)] md:min-h-[calc(100vh-200px)]">
           
           {/* Left Panel - Systems Status */}
           <div className="lg:col-span-3 space-y-4 md:space-y-6">
