@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Rocket, Clock, Sun, MapPin, CheckCircle, ClipboardList, ScrollText, RefreshCw, CloudSun, Square, Loader2, AlertTriangle } from 'lucide-react';
 
 const RocketLaunchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,22 +18,32 @@ const RocketLaunchPage: React.FC = () => {
   const [launchSequence, setLaunchSequence] = useState<string[]>([]);
 
 
-  //function to start the rocket via Api url sending true boolean
+  // Mock API base URL
+  const API_BASE_URL = process.env.NODE_ENV === 'development' 
+    ? 'https://api.example.com' 
+    : 'YOUR_PRODUCTION_API_URL';
+
+  // Function to start the rocket
   const startRocket = async () => {
     try {
-      const response = await fetch('https://api.example.com/start-rocket', {
+      const response = await fetch(`${API_BASE_URL}/start-rocket`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ launch: true })
       });
+      
       if (!response.ok) {
         throw new Error('Failed to start rocket');
       }
-      console.log('Rocket started successfully');
+      
+      const data = await response.json();
+      console.log('Rocket started successfully:', data);
+      return data;
     } catch (error) {
       console.error('Error starting rocket:', error);
+      throw error;
     }
   };
 
@@ -41,10 +52,10 @@ const RocketLaunchPage: React.FC = () => {
 
   
 
-  //funciton to stop the rocket via Api url sending false boolean not working
+  // Function to stop the rocket
   const stopRocket = async () => {
     try {
-      const response = await fetch('https://api.example.com/step-rocket', {
+      const response = await fetch(`${API_BASE_URL}/step-rocket`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -157,7 +168,7 @@ const RocketLaunchPage: React.FC = () => {
             <div className="flex items-center space-x-3 md:space-x-6">
               <div className="flex items-center space-x-2 md:space-x-4">
                 <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-lg md:text-2xl">🚀</span>
+                  <Rocket className="w-4 h-4 md:w-6 md:h-6 text-cyan-100" />
                 </div>
                 <div>
                   <h1 className="text-base md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
@@ -183,7 +194,7 @@ const RocketLaunchPage: React.FC = () => {
           <div className="lg:col-span-3 space-y-4 md:space-y-6">
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold text-cyan-300 mb-4 flex items-center">
-                <span className="mr-2">📋</span>
+                <ClipboardList className="w-5 h-5 mr-2 text-cyan-300" />
                 SYSTEMS STATUS
               </h2>
               <div className="space-y-2 md:space-y-3">
@@ -203,7 +214,7 @@ const RocketLaunchPage: React.FC = () => {
             {/* Launch Sequence Log */}
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold text-cyan-300 mb-4 flex items-center">
-                <span className="mr-2">📜</span>
+                <ScrollText className="w-5 h-5 mr-2 text-cyan-300" />
                 SEQUENCE LOG
               </h2>
               <div className="space-y-2 max-h-48 md:max-h-64 overflow-y-auto">
@@ -231,8 +242,8 @@ const RocketLaunchPage: React.FC = () => {
                   ? 'animate-bounce' 
                   : 'hover:scale-110'
             }`}>
-              <div className="text-6xl md:text-8xl lg:text-9xl mb-4 md:mb-8 transform transition-transform duration-300 hover:rotate-6 filter drop-shadow-2xl">
-                🚀
+              <div className="mb-4 md:mb-8 transform transition-transform duration-300 hover:rotate-6 filter drop-shadow-2xl">
+                <Rocket className="w-16 h-16 md:w-24 md:h-24 lg:w-32 lg:h-32 text-white" />
               </div>
               
               {/* Enhanced rocket flame effect */}
@@ -304,17 +315,17 @@ const RocketLaunchPage: React.FC = () => {
                 <span className="relative z-10 flex items-center justify-center gap-2 md:gap-4">
                   {isLaunching ? (
                     <>
-                      <span className="animate-spin text-xl md:text-3xl">🌟</span>
+                      <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-yellow-300" />
                       <span className="text-sm md:text-2xl">LAUNCHING...</span>
                     </>
                   ) : showCountdown ? (
                     <>
-                      <span className="animate-pulse text-xl md:text-3xl">⏰</span>
+                      <Clock className="w-5 h-5 md:w-6 md:h-6 animate-pulse text-cyan-300" />
                       <span className="text-sm md:text-2xl">SEQUENCE ACTIVE</span>
                     </>
                   ) : (
                     <>
-                      <span className="animate-bounce text-xl md:text-3xl">🚀</span>
+                      <Rocket className="w-5 h-5 md:w-6 md:h-6 animate-bounce text-white" />
                       <span className="text-sm md:text-2xl">INITIATE LAUNCH</span>
                     </>
                   )}
@@ -345,17 +356,17 @@ const RocketLaunchPage: React.FC = () => {
                 <span className="flex items-center justify-center gap-2 md:gap-3">
                   {isLaunching ? (  
                     <>
-                      <span className="animate-spin">🛑</span>
+                      <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 animate-pulse text-red-400" />
                       <span className="text-sm md:text-lg">ABORT LAUNCH</span>
                     </>
                   ) : showCountdown ? (
                     <>
-                      <span className="animate-pulse">⏹️</span>
+                      <Square className="w-4 h-4 md:w-5 md:h-5 animate-pulse text-yellow-400" />
                       <span className="text-sm md:text-lg">HOLD SEQUENCE</span>
                     </>
                   ) : (
                     <>
-                      <span>🔄</span>
+                      <RefreshCw className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
                       <span className="text-sm md:text-lg">RESET SYSTEMS</span>
                     </>
                   )}
@@ -368,13 +379,13 @@ const RocketLaunchPage: React.FC = () => {
           <div className="lg:col-span-3 space-y-4 md:space-y-6">
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold text-cyan-300 mb-4 flex items-center">
-                <span className="mr-2">🌦️</span>
+                <CloudSun className="w-5 h-5 mr-2 text-cyan-300" />
                 WEATHER CONDITIONS
               </h2>
               <div className="space-y-3 md:space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm md:text-base text-cyan-400">Conditions:</span>
-                  <span className="text-sm md:text-base text-green-400 font-semibold">CLEAR ☀️</span>
+                  <span className="text-sm md:text-base text-green-400 font-semibold flex items-center">CLEAR <Sun className="w-4 h-4 ml-1" /></span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm md:text-base text-cyan-400">Wind Speed:</span>
@@ -397,7 +408,7 @@ const RocketLaunchPage: React.FC = () => {
             
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold text-cyan-300 mb-4 flex items-center">
-                <span className="mr-2">📍</span>
+                <MapPin className="w-5 h-5 mr-2 text-cyan-300" />
                 MISSION PROFILE
               </h2>
               <div className="space-y-2 md:space-y-3 text-xs md:text-sm">
@@ -429,8 +440,10 @@ const RocketLaunchPage: React.FC = () => {
       {isLaunching && (
         <div className="absolute top-20 md:top-32 left-1/2 transform -translate-x-1/2 z-20 px-4">
           <div className="bg-green-500/20 backdrop-blur-sm border border-green-400 rounded-2xl p-4 md:p-6 text-center">
-            <div className="text-2xl md:text-4xl font-bold text-green-400 animate-bounce mb-2">
-              🌟 LIFTOFF SUCCESSFUL! 🌟
+            <div className="flex items-center justify-center space-x-2 text-2xl md:text-4xl font-bold text-green-400 animate-bounce mb-2">
+              <CheckCircle className="w-8 h-8 md:w-10 md:h-10" />
+              <span>LIFTOFF SUCCESSFUL!</span>
+              <CheckCircle className="w-8 h-8 md:w-10 md:h-10" />
             </div>
             <div className="text-green-300 text-base md:text-lg">
               Vehicle performing nominally

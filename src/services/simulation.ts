@@ -42,38 +42,138 @@ export class RocketSimulation {
   
   // Simulation state
   private state = {
-    engineStatus: 'off' as 'off' | 'nominal' | 'shutdown' | 'backup',
+    engineStatus: 'off' as 'off' | 'starting' | 'nominal' | 'shutdown' | 'backup',
     missionPhase: 'pre-launch',
-    currentStage: 1,
+    currentStage: 0,
     mass: 0,
     thrust: 0,
     fuel: 0,
+    oxidizer: 0,
+    chamberPressure: 0, // Pa
+    nozzleRatio: 0,
+    specificImpulse: 0, // seconds
+    throttle: 0, // 0-100%
+    mixtureRatio: 0, // Actual O/F ratio
     payloadDeployed: false,
     acceleration: { x: 0, y: 0, z: 0 },
-    orientation: { pitch: 0, yaw: 0, roll: 0 }
+    orientation: { pitch: 0, yaw: 0, roll: 0 },
+    engineTemp: 293, // Kelvin
+    nozzleTemp: 293, // Kelvin
+    turboPumpRPM: 0, // RPM
+    fuelPumpPressure: 0, // Pa
+    oxidizerPumpPressure: 0, // Pa
+    startupTime: 0, // ms since engine start command
+    engineStartTime: 0, // timestamp of last engine start
+    engineShutdownTime: 0, // timestamp of last engine shutdown
+    engineStartSequence: false,
+    engineShutdownSequence: false,
+    engineStartupAbort: false,
+    engineShutdownAbort: false,
+    engineStartupAbortReason: '',
+    engineShutdownAbortReason: '',
+    engineStartupAbortTime: 0,
+    engineShutdownAbortTime: 0,
+    engineStartupAbortCode: 0,
+    engineShutdownAbortCode: 0,
+    engineStartupAbortDescription: '',
+    engineShutdownAbortDescription: '',
+    engineStartupAbortSeverity: 0,
+    engineShutdownAbortSeverity: 0,
+    engineStartupAbortAction: '',
+    engineShutdownAbortAction: '',
+    engineStartupAbortTimeRemaining: 0,
+    engineShutdownAbortTimeRemaining: 0,
+    engineStartupAbortCountdown: 0,
+    engineShutdownAbortCountdown: 0,
+    engineStartupAbortStatus: 0,
+    engineShutdownAbortStatus: 0,
+    engineStartupAbortFlags: 0,
+    engineShutdownAbortFlags: 0
   };
   
   // Rocket configuration
-  private stages: RocketStage[] = [
+  private stages: RocketStage[] | any = [
     {
       name: "First Stage",
       dryMass: 22200, // kg (Falcon 9 first stage)
-      propellantMass: 395700, // kg
+      propellantMass: 395700, // kg (RP-1 + LOX)
       mass: 417900, // kg (total mass)
       thrust: 7607000, // N (9 Merlin engines)
       specificImpulse: 282, // seconds (sea level)
       burnTime: 162, // seconds
-      separated: false
+      separated: false,
+      // Engine parameters
+      engineCount: 9,
+      chamberPressure: 9.7e6, // Pa (Merlin 1D chamber pressure)
+      nozzleRatio: 16, // Expansion ratio
+      mixtureRatio: 2.56, // O/F ratio (LOX/RP-1)
+      maxThrottle: 100, // %
+      minThrottle: 40, // %
+      startupTime: 3, // seconds
+      shutdownTime: 2, // seconds
+      // Tank parameters
+      fuelTankVolume: 150000, // liters (RP-1)
+      oxidizerTankVolume: 350000, // liters (LOX)
+      ullageVolume: 0.05, // 5% ullage volume
+      // Performance
+      maxGimbal: 5, // degrees
+      gimbalRate: 20, // degrees/second
+      // Thermal
+      maxEngineTemp: 3500, // K
+      maxNozzleTemp: 3200, // K
+      // Turbopump
+      maxPumpRPM: 36000, // RPM
+      maxPumpPressure: 1e7, // Pa
+      // Startup sequence
+      ignitionSequence: [
+        { time: 0, action: 'ignition', thrust: 0.1 },
+        { time: 0.5, action: 'chilldown', thrust: 0.3 },
+        { time: 1.0, action: 'main_valve_open', thrust: 0.5 },
+        { time: 1.5, action: 'turbopump_start', thrust: 0.7 },
+        { time: 2.0, action: 'mainstage', thrust: 1.0 }
+      ]
     },
     {
       name: "Second Stage",
       dryMass: 4000, // kg
-      propellantMass: 107500, // kg
+      propellantMass: 107500, // kg (RP-1 + LOX)
       mass: 111500, // kg (total mass)
       thrust: 934000, // N (1 Merlin Vacuum engine)
       specificImpulse: 348, // seconds (vacuum)
       burnTime: 397, // seconds
-      separated: false
+      separated: false,
+      // Engine parameters
+      engineCount: 1,
+      chamberPressure: 9.7e6, // Pa (MVac chamber pressure)
+      nozzleRatio: 165, // Expansion ratio (much larger for vacuum)
+      mixtureRatio: 2.56, // O/F ratio (LOX/RP-1)
+      maxThrottle: 100, // %
+      minThrottle: 39, // % (MVac can throttle deeper than sea level engines)
+      startupTime: 5, // seconds (longer for vacuum start)
+      shutdownTime: 3, // seconds
+      // Tank parameters
+      fuelTankVolume: 40000, // liters (RP-1)
+      oxidizerTankVolume: 90000, // liters (LOX)
+      ullageVolume: 0.03, // 3% ullage volume (better pressurization in space)
+      // Performance
+      maxGimbal: 5, // degrees
+      gimbalRate: 15, // degrees/second (slower for precision in space)
+      // Thermal
+      maxEngineTemp: 3600, // K (higher for vacuum operation)
+      maxNozzleTemp: 3300, // K
+      // Turbopump
+      maxPumpRPM: 40000, // RPM (higher for vacuum)
+      maxPumpPressure: 1.2e7, // Pa (higher pressure for vacuum)
+      // Startup sequence
+      ignitionSequence: [
+        { time: 0, action: 'ullage_motors_ignite', thrust: 0 },
+        { time: 0.5, action: 'ignition', thrust: 0.1 },
+        { time: 1.0, action: 'chilldown', thrust: 0.3 },
+        { time: 2.0, action: 'main_valve_open', thrust: 0.5 },
+        { time: 3.0, action: 'turbopump_start', thrust: 0.7 },
+        { time: 4.0, action: 'mainstage', thrust: 1.0 },
+        { time: 5.0, action: 'ullage_motors_shutdown', thrust: 1.0 }
+      ]
     }
   ];
   

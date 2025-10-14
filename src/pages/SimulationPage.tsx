@@ -1,6 +1,8 @@
 // src/pages/SimulationPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { RocketSimulation } from '../services/simulation';
+import { Rocket, Play, Pause } from 'lucide-react';
 import TelemetryDashboard from '../components/TelemetryDashboard';
 import ControlPanel from '../components/ControlPanel';
 import Rocket3DViewer from '../components/Rocket3DViewer';
@@ -64,7 +66,7 @@ const SimulationPage: React.FC = () => {
           <div className="flex items-center space-x-2 md:space-x-6">
             <div className="flex items-center space-x-2 md:space-x-3">
               <div className="w-5 h-5 md:w-8 md:h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-xs md:text-sm font-bold">🚀</span>
+                <Rocket className="w-3 h-3 md:w-4 md:h-4 text-cyan-100" />
               </div>
               <div>
                 <h1 className="text-sm md:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
@@ -81,7 +83,16 @@ const SimulationPage: React.FC = () => {
           </div>
           
           {/* Simulation Controls - Compact layout */}
-          <div className="flex items-center space-x-1 md:space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <Link 
+              to="/telemetry/overview" 
+              className="hidden sm:flex items-center px-3 py-1.5 text-sm text-cyan-300 hover:text-white bg-slate-800/50 hover:bg-slate-700/70 rounded-lg transition-colors border border-cyan-500/30"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>View Telemetry</span>
+            </Link>
             <div className="flex items-center space-x-1 md:space-x-2 bg-slate-800/50 rounded-lg p-1 md:p-2">
               <span className="text-xs text-cyan-300 hidden sm:inline">SPEED:</span>
               <select 
@@ -105,7 +116,17 @@ const SimulationPage: React.FC = () => {
                   : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25'
               }`}
             >
-              {isSimulating ? '⏸️' : '▶️'} <span className="hidden sm:inline">{isSimulating ? 'PAUSE' : 'START'}</span>
+              {isSimulating ? (
+                <>
+                  <Pause className="w-4 h-4 inline-block" />
+                  <span className="hidden sm:inline ml-1">PAUSE</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 inline-block" />
+                  <span className="hidden sm:inline ml-1">START</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -132,7 +153,10 @@ const SimulationPage: React.FC = () => {
                 </div>
               </div>
               <div className="h-[calc(100%-32px)] md:h-[calc(100%-60px)] rounded-lg overflow-hidden">
-                <Rocket3DViewer telemetry={telemetry} />
+                <Rocket3DViewer 
+                  telemetry={telemetry} 
+                  isEngineRunning={telemetry?.engine?.status === 'RUNNING' || false} 
+                />
               </div>
             </div>
           </div>

@@ -1,16 +1,17 @@
 // src/components/Rocket3DViewer.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Video, Eye, Flame, Satellite, Unlink, Globe, CircleOff, X } from 'lucide-react';
 import type { TelemetryData } from '../types/telemetry';
 
 interface Rocket3DViewerProps {
   telemetry: TelemetryData | null;
+  isEngineRunning: boolean;
 }
 
 type CameraView = 'external' | 'onboard' | 'engine' | 'payload' | 'separation' | 'orbital';
-
-const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
+const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry, isEngineRunning }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -18,7 +19,7 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const [currentView, setCurrentView] = useState<CameraView>('external');
-  const [showFlame, setShowFlame] = useState(false);
+  const [showFlame, setShowFlame] = useState(isEngineRunning);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -289,9 +290,10 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
     };
   }, [showFlame]);
 
-  // Update rocket position and state based on telemetry
+  // Update rocket position and orientation when telemetry changes
   useEffect(() => {
     if (telemetry && rocketRef.current) {
+      setShowFlame(isEngineRunning);
       // Update position (scaled down for visualization)
       rocketRef.current.position.set(
         telemetry.position.x / 1000,
@@ -374,13 +376,13 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
   }, [currentView, telemetry]);
 
   const cameraViews = [
-    { id: 'external', name: 'External', icon: '🎥', description: 'External tracking camera' },
-    { id: 'onboard', name: 'Onboard', icon: '👁️', description: 'Onboard forward camera' },
-    { id: 'engine', name: 'Engine', icon: '🔥', description: 'Engine bay camera' },
-    { id: 'payload', name: 'Payload', icon: '🛰️', description: 'Payload bay camera' },
-    { id: 'separation', name: 'Stage Sep', icon: '🔗', description: 'Stage separation view' },
-    { id: 'orbital', name: 'Orbital', icon: '🌍', description: 'Orbital overview' }
-  ];
+    { id: 'external', name: 'External', Icon: Video, description: 'External tracking camera' },
+    { id: 'onboard', name: 'Onboard', Icon: Eye, description: 'Onboard forward camera' },
+    { id: 'engine', name: 'Engine', Icon: Flame, description: 'Engine bay camera' },
+    { id: 'payload', name: 'Payload', Icon: Satellite, description: 'Payload bay camera' },
+    { id: 'separation', name: 'Stage Sep', Icon: Unlink, description: 'Stage separation view' },
+    { id: 'orbital', name: 'Orbital', Icon: Globe, description: 'Orbital overview' }
+  ] as const;
 
   return (
     <div className="w-full h-full relative">
@@ -388,24 +390,20 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
       <div ref={mountRef} className="w-full h-full rounded-lg" />
       
       {/* Camera Controls Overlay - Compact for mobile */}
-      <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1">
-        <div className="text-xs font-semibold text-cyan-300 mb-1 hidden sm:block">CAMERA VIEWS</div>
+      <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1 text-xs max-w-[120px] sm:max-w-none">
         <div className="grid grid-cols-3 sm:grid-cols-2 gap-1">
-          {cameraViews.map((view) => (
+          {cameraViews.map(({ id, Icon, description }) => (
             <button
-              key={view.id}
-              onClick={() => setCurrentView(view.id as CameraView)}
-              className={`p-1 sm:p-2 rounded text-xs font-medium transition-all duration-200 ${
-                currentView === view.id
-                  ? 'bg-cyan-500 text-white shadow-lg'
-                  : 'bg-slate-700/50 text-cyan-300 hover:bg-slate-600/50'
+              key={id}
+              onClick={() => setCurrentView(id)}
+              className={`p-2 rounded-md transition-colors ${
+                currentView === id
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
-              title={view.description}
+              title={description}
             >
-              <div className="flex items-center justify-center sm:space-x-1">
-                <span className="text-xs sm:text-sm">{view.icon}</span>
-                <span className="hidden sm:inline text-xs">{view.name}</span>
-              </div>
+              <Icon className="w-5 h-5" />
             </button>
           ))}
         </div>
@@ -413,7 +411,7 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
 
       {/* Telemetry Overlay - Compact for mobile */}
       {telemetry && (
-        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1 text-xs max-w-[120px] sm:max-w-none">
+        <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg p-2 space-y-1 text-xs">
           <div className="font-semibold text-cyan-300 text-xs hidden sm:block">VEHICLE STATUS</div>
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
@@ -430,7 +428,7 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
                 telemetry.engine.status === 'RUNNING' ? 'text-green-400' : 
                 telemetry.engine.status === 'OFF' ? 'text-gray-400' : 'text-red-400'
               }`}>
-                {telemetry.engine.status === 'RUNNING' ? '🔥' : telemetry.engine.status === 'OFF' ? '⚫' : '❌'}
+                {telemetry.engine.status === 'RUNNING' ? <Flame className="w-4 h-4" /> : telemetry.engine.status === 'OFF' ? <CircleOff className="w-4 h-4" /> : <X className="w-4 h-4" />}
               </span>
             </div>
           </div>
@@ -441,9 +439,17 @@ const Rocket3DViewer: React.FC<Rocket3DViewerProps> = ({ telemetry }) => {
       <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1">
         <div className="flex items-center space-x-1 text-xs">
           <span className="text-cyan-300 hidden sm:inline">VIEW:</span>
-          <span className="text-white font-semibold text-xs">
-            {cameraViews.find(v => v.id === currentView)?.icon} 
-            <span className="hidden sm:inline ml-1">{cameraViews.find(v => v.id === currentView)?.name.toUpperCase()}</span>
+          <span className="text-white font-semibold text-xs flex items-center">
+            {(() => {
+              const view = cameraViews.find(v => v.id === currentView);
+              const IconComponent = view?.Icon;
+              return (
+                <>
+                  {IconComponent && <IconComponent className="w-4 h-4" />}
+                  <span className="hidden sm:inline ml-1">{view?.name.toUpperCase()}</span>
+                </>
+              );
+            })()}
           </span>
         </div>
       </div>

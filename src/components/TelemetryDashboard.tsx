@@ -5,6 +5,7 @@ import Gauge from './Gauge';
 import LineChart from './LineChart';
 import ThrustIndicator from './ThrustIndicator';
 import AttitudeIndicator from './AttitudeIndicator';
+import EngineTelemetryGraphs from './EngineTelemetryGraphs';
 
 interface TelemetryDashboardProps {
   data: TelemetryData | null;
@@ -12,6 +13,16 @@ interface TelemetryDashboardProps {
 
 const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
   const [activeTab, setActiveTab] = useState<'flight' | 'engine' | 'navigation'>('flight');
+
+  // Track telemetry history for graphs
+  const [telemetryHistory, setTelemetryHistory] = useState<TelemetryData[]>([]);
+  
+  // Update telemetry history when new data arrives
+  React.useEffect(() => {
+    if (data) {
+      setTelemetryHistory(prev => [...prev, data].slice(-300)); // Keep last 300 data points
+    }
+  }, [data]);
 
   if (!data) {
     return (
@@ -184,19 +195,114 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
 
           {activeTab === 'engine' && (
             <div className="space-y-4 md:space-y-6">
+              {/* Engine Telemetry Graphs */}
+              <div className="bg-slate-800/50 rounded-xl border border-cyan-500/20 p-3 md:p-4">
+                <h3 className="text-sm font-semibold text-cyan-300 mb-3">ENGINE TELEMETRY</h3>
+                <EngineTelemetryGraphs 
+                  data={telemetryHistory}
+                  width={800}
+                  height={200}
+                  timeWindow={60} // Show last 60 seconds
+                />
+              </div>
+              
               {/* Engine Status */}
               <div className="bg-slate-800/30 rounded-lg p-3 md:p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-cyan-300">ENGINE STATUS</h3>
-                  <div className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(data.engine.status)} bg-current/20`}>
-                    {data.engine.status}
+                  <div className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(data.engine?.status || 'offline')} bg-current/20`}>
+                    {(data.engine?.status || 'OFFLINE').toUpperCase()}
                   </div>
                 </div>
+                
+                {/* Engine Parameters Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">CHAMBER PRESSURE</div>
+                    <div className="text-lg font-mono">
+                      {((data.engine?.chamberPressure || 0) / 1e6).toFixed(2)} <span className="text-sm">MPa</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-blue-500 rounded-full"
+                        style={{ width: `${Math.min(100, ((data.engine?.chamberPressure || 0) / 15e6) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">ENGINE TEMP</div>
+                    <div className="text-lg font-mono">
+                      {Math.round(data.engine?.temperature || 0)} <span className="text-sm">K</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-amber-500 rounded-full"
+                        style={{ width: `${Math.min(100, ((data.engine?.temperature || 0) / 4000) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">MIXTURE RATIO</div>
+                    <div className="text-lg font-mono">
+                      {data.engine?.fuelFlowRate ? (data.engine.oxidizer / data.engine.fuel).toFixed(2) : '0.00'} <span className="text-sm">O/F</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-emerald-500 rounded-full"
+                        style={{ 
+                          width: `${Math.min(100, Math.max(0, ((Number(data.engine?.fuelFlowRate ? (data.engine.oxidizer / data.engine.fuel) : 0) - 1.5) / 2) * 100))}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">TURBOPUMP</div>
+                    <div className="text-lg font-mono">
+                      {((data.engine?.turbineSpeed || 0) / 1000).toFixed(1)} <span className="text-sm">kRPM</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-violet-500 rounded-full"
+                        style={{ width: `${Math.min(100, ((data.engine?.turbineSpeed || 0) / 40000) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">FUEL PRESSURE</div>
+                    <div className="text-lg font-mono">
+                      {(data.engine?.chamberPressure || 0).toFixed(2)} <span className="text-sm">MPa</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-blue-400 rounded-full"
+                        style={{ width: `${Math.min(100, ((data.engine?.chamberPressure || 0) / data.engine?.maxChamberPressure || 1) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded p-2">
+                    <div className="text-xs text-cyan-400">OXIDIZER PRESSURE</div>
+                    <div className="text-lg font-mono">
+                      {(data.engine?.chamberPressure || 0).toFixed(2)} <span className="text-sm">MPa</span>
+                    </div>
+                    <div className="h-1 bg-slate-700/50 rounded-full mt-1">
+                      <div 
+                        className="h-full bg-cyan-400 rounded-full"
+                        style={{ width: `${Math.min(100, ((data.engine?.chamberPressure || 0) / data.engine?.maxChamberPressure || 1) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
                 <ThrustIndicator 
-                  currentThrust={data.engine.thrust}
-                  maxThrust={data.engine.maxThrust}
-                  fuel={data.engine.fuel}
-                  oxidizer={data.engine.oxidizer}
+                  currentThrust={data.engine?.thrust || 0}
+                  maxThrust={data.engine?.maxThrust || 1}
+                  fuel={data.engine?.fuel || 0}
+                  oxidizer={data.engine?.oxidizer || 0}
                 />
               </div>
               
@@ -241,16 +347,20 @@ const TelemetryDashboard: React.FC<TelemetryDashboardProps> = ({ data }) => {
                   <div>
                     <div className="flex justify-between text-xs mb-2">
                       <span className="text-cyan-400">Fuel (RP-1)</span>
-                      <span className="text-white">{formatValue(data.engine.fuel)} kg</span>
+                      <span className="text-white">{formatValue(data.engine?.fuel ?? 0)} kg</span>
                     </div>
                     <div className="w-full bg-slate-700 rounded-full h-3">
                       <div 
                         className="h-3 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-300"
-                        style={{ width: `${(data.engine.fuel / data.engine.initialFuel) * 100}%` }}
+                        style={{ 
+                          width: `${data.engine && data.engine.initialFuel > 0 ? 
+                            (data.engine.fuel / data.engine.initialFuel) * 100 : 0}%` 
+                        }}
                       ></div>
                     </div>
                     <div className="text-xs text-cyan-300/60 mt-1">
-                      {((data.engine.fuel / data.engine.initialFuel) * 100).toFixed(1)}% remaining
+                      {data.engine && data.engine.initialFuel > 0 ? 
+                        ((data.engine.fuel / data.engine.initialFuel) * 100).toFixed(1) : '0.0'}% remaining
                     </div>
                   </div>
                   <div>

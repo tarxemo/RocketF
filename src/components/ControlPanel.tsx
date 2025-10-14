@@ -1,5 +1,6 @@
 // src/components/ControlPanel.tsx
 import React, { useState } from 'react';
+import { Flame, Rocket, Power, Link2, Satellite, Zap, Cpu, MemoryStick, BarChart3, Sparkles } from 'lucide-react';
 import type { TelemetryData } from '../types/telemetry';
 
 interface ControlPanelProps {
@@ -59,7 +60,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
       {/* Engine Controls */}
       <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
         <h2 className="text-base md:text-lg font-semibold text-cyan-300 mb-3 md:mb-4 flex items-center">
-          <span className="mr-2">🔥</span>
+          <Flame className="w-4 h-4 md:w-5 md:h-5 mr-2" />
           ENGINE CONTROLS
         </h2>
         
@@ -76,7 +77,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
               }`}
             >
               <div className="flex items-center justify-center space-x-1 md:space-x-2">
-                <span>🚀</span>
+                <Rocket className="w-4 h-4 md:w-5 md:h-5" />
                 <span>START</span>
               </div>
             </button>
@@ -90,7 +91,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
               }`}
             >
               <div className="flex items-center justify-center space-x-1 md:space-x-2">
-                <span>🛑</span>
+                <Power className="w-4 h-4 md:w-5 md:h-5" />
                 <span>STOP</span>
               </div>
             </button>
@@ -131,7 +132,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
       {/* Flight Operations */}
       <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
         <h2 className="text-base md:text-lg font-semibold text-cyan-300 mb-3 md:mb-4 flex items-center">
-          <span className="mr-2">🛰️</span>
+          <Satellite className="w-4 h-4 md:w-5 md:h-5 mr-2" />
           FLIGHT OPS
         </h2>
         
@@ -146,9 +147,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
             }`}
           >
             <div className="flex items-center justify-center space-x-1 md:space-x-2">
-              <span>🔗</span>
+              <Link2 className="w-4 h-4 md:w-5 md:h-5" />
               <span>SEPARATE STAGE</span>
-              {canSeparateStage && <span className="animate-bounce">⚡</span>}
+              {canSeparateStage && <Zap className="w-4 h-4 md:w-5 md:h-5 animate-bounce" />}
             </div>
           </button>
           
@@ -162,9 +163,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
             }`}
           >
             <div className="flex items-center justify-center space-x-1 md:space-x-2">
-              <span>📡</span>
+              <Satellite className="w-4 h-4 md:w-5 md:h-5" />
               <span>DEPLOY PAYLOAD</span>
-              {canDeployPayload && <span className="animate-bounce">✨</span>}
+              {canDeployPayload && <Sparkles className="w-4 h-4 md:w-5 md:h-5 animate-bounce" />}
             </div>
           </button>
         </div>
@@ -173,7 +174,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
       {/* System Status */}
       <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-3 md:p-4">
         <h2 className="text-base md:text-lg font-semibold text-cyan-300 mb-3 md:mb-4 flex items-center">
-          <span className="mr-2">📊</span>
+          <BarChart3 className="w-4 h-4 md:w-5 md:h-5 mr-2" />
           SYSTEM STATUS
         </h2>
         
@@ -208,7 +209,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
           {/* Additional System Metrics */}
           <div className="grid grid-cols-2 gap-2 md:gap-3 mt-3 md:mt-4">
             <div className="bg-slate-800/30 rounded-lg p-2 md:p-3">
-              <div className="text-xs text-cyan-400 uppercase tracking-wide">CPU Load</div>
+              <div className="flex items-center space-x-1 text-xs text-cyan-400 uppercase tracking-wide">
+                <Cpu className="w-3 h-3" />
+                <span>CPU Load</span>
+              </div>
               <div className="text-xs md:text-sm font-bold text-white">{((telemetry?.avionics.cpuLoad || 0) * 100).toFixed(1)}%</div>
               <div className="w-full bg-slate-700 rounded-full h-1 mt-1">
                 <div 
@@ -218,7 +222,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ telemetry, onCommand }) => 
               </div>
             </div>
             <div className="bg-slate-800/30 rounded-lg p-2 md:p-3">
-              <div className="text-xs text-cyan-400 uppercase tracking-wide">Memory</div>
+              <div className="flex items-center space-x-1 text-xs text-cyan-400 uppercase tracking-wide">
+                <MemoryStick className="w-3 h-3" />
+                <span>Memory</span>
+              </div>
               <div className="text-xs md:text-sm font-bold text-white">{((telemetry?.avionics.memoryUsage || 0) * 100).toFixed(1)}%</div>
               <div className="w-full bg-slate-700 rounded-full h-1 mt-1">
                 <div 

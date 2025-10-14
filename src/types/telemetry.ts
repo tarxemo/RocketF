@@ -3,6 +3,13 @@ export interface Vector3D {
   x: number;
   y: number;
   z: number;
+  // Additional properties for compatibility
+  lng?: number;
+  lat?: number;
+  alt?: number;
+  horizontal?: number;
+  vertical?: number;
+  total?: number;
 }
 
 export interface Orientation {
@@ -25,6 +32,14 @@ export interface EngineData {
   initialOxidizer: number;
   fuelFlowRate: number; // kg/s
   temperature: number; // Kelvin
+  engineTemp: number; // Celsius
+  mixtureRatio: number;
+  turboPumpRPM: number;
+  engine: {
+    engineTemp: number;
+    mixtureRatio: number;
+    turboPumpRPM: number;
+  };
 }
 
 export interface StagingData {
@@ -77,7 +92,7 @@ export interface TelemetryData {
   velocity: Vector3D & { total: number };
   acceleration: Vector3D & { total: number };
   orientation: Orientation;
-  engine: EngineData;
+  engine: any;
   staging: StagingData;
   payload: PayloadData;
   structural: StructuralData;

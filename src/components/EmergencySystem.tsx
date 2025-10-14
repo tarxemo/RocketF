@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { 
+  AlertTriangle, 
+  AlertOctagon, 
+  Wrench, 
+  Zap, 
+  Flame, 
+  Fuel, 
+  Compass, 
+  CloudLightning,
+  Power
+} from 'lucide-react';
 
 interface EmergencyScenario {
   id: string;
   name: string;
   severity: 'critical' | 'warning' | 'caution';
   description: string;
-  icon: string;
+  icon: ReactNode;
   actions: string[];
   autoTrigger?: boolean;
   triggerConditions?: {
@@ -39,7 +51,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Engine Failure',
       severity: 'critical',
       description: 'Primary engine has experienced an anomaly',
-      icon: '🔥',
+      icon: <Flame className="w-5 h-5" />,
       actions: ['Abort Mission', 'Switch to Backup Engine', 'Emergency Landing'],
       autoTrigger: true,
       triggerConditions: { engineFailure: true }
@@ -49,7 +61,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Fuel System Leak',
       severity: 'critical',
       description: 'Propellant leak detected in fuel system',
-      icon: '⛽',
+      icon: <Fuel className="w-5 h-5" />,
       actions: ['Immediate Abort', 'Isolate Fuel Lines', 'Emergency Shutdown'],
       autoTrigger: true,
       triggerConditions: { fuel: 10 }
@@ -59,7 +71,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Guidance System Failure',
       severity: 'warning',
       description: 'Navigation computer has lost primary guidance',
-      icon: '🧭',
+      icon: <Compass className="w-5 h-5" />,
       actions: ['Switch to Backup Guidance', 'Manual Control', 'Abort if Critical'],
     },
     {
@@ -67,7 +79,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Structural Overstress',
       severity: 'warning',
       description: 'Vehicle experiencing excessive structural loads',
-      icon: '⚠️',
+      icon: <AlertTriangle className="w-5 h-5" />,
       actions: ['Reduce Thrust', 'Adjust Trajectory', 'Monitor Closely'],
       autoTrigger: true,
       triggerConditions: { velocity: 2000 }
@@ -77,7 +89,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Weather Violation',
       severity: 'caution',
       description: 'Weather conditions outside launch criteria',
-      icon: '🌩️',
+      icon: <CloudLightning className="w-5 h-5" />,
       actions: ['Hold Launch', 'Monitor Weather', 'Scrub Mission'],
     },
     {
@@ -85,7 +97,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       name: 'Range Safety Violation',
       severity: 'critical',
       description: 'Vehicle has deviated from approved flight path',
-      icon: '🚨',
+      icon: <AlertOctagon className="w-5 h-5" />,
       actions: ['Flight Termination System', 'Immediate Abort', 'Range Clear'],
       autoTrigger: true,
       triggerConditions: { altitude: 50000 }
@@ -166,12 +178,12 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       {emergencyMode && (
         <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 animate-pulse">
           <div className="flex items-center justify-center space-x-3">
-            <span className="text-3xl animate-spin">🚨</span>
+            <AlertOctagon className="w-8 h-8 text-red-500 animate-pulse" />
             <div className="text-center">
               <div className="text-xl font-bold text-red-400">EMERGENCY MODE ACTIVE</div>
               <div className="text-red-300 text-sm">{activeScenarios.length} active scenario(s)</div>
             </div>
-            <span className="text-3xl animate-spin">🚨</span>
+            <AlertOctagon className="w-8 h-8 text-red-500 animate-pulse" />
           </div>
         </div>
       )}
@@ -180,14 +192,16 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       {activeScenarios.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-red-400 flex items-center">
-            <span className="mr-2">⚡</span>
+            <Zap className="w-4 h-4 mr-2 text-yellow-400" />
             ACTIVE EMERGENCIES
           </h3>
           {activeScenarios.map(scenario => (
             <div key={scenario.id} className={`border rounded-xl p-4 ${getSeverityColor(scenario.severity)}`}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <span className="text-2xl">{scenario.icon}</span>
+                  <div className="w-8 h-8 flex items-center justify-center">
+                    {scenario.icon}
+                  </div>
                   <div>
                     <div className="font-bold text-lg">{scenario.name}</div>
                     <div className="text-sm opacity-80">{scenario.description}</div>
@@ -228,7 +242,7 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
       {/* Manual Emergency Triggers */}
       <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-cyan-500/20 p-6">
         <h3 className="text-lg font-semibold text-cyan-300 mb-4 flex items-center">
-          <span className="mr-2">🔧</span>
+          <Wrench className="w-5 h-5 mr-2 text-cyan-300" />
           EMERGENCY PROCEDURES
         </h3>
         
@@ -262,9 +276,9 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
                      transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <span className="flex items-center justify-center space-x-3">
-              <span className="text-2xl">🛑</span>
+              <Power className="w-6 h-6" />
               <span>MISSION ABORT</span>
-              <span className="text-2xl">🛑</span>
+              <Power className="w-6 h-6" />
             </span>
           </button>
         </div>
@@ -275,7 +289,9 @@ const EmergencySystem: React.FC<EmergencySystemProps> = ({
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-slate-900 border border-red-500 rounded-2xl p-8 max-w-md mx-4">
             <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⚠️</div>
+              <div className="flex justify-center mb-4">
+                <AlertTriangle className="w-16 h-16 text-yellow-500" />
+              </div>
               <div className="text-2xl font-bold text-red-400 mb-2">CONFIRM MISSION ABORT</div>
               <div className="text-gray-300">
                 This action will immediately terminate the mission and cannot be undone.

@@ -1,5 +1,6 @@
 // src/components/MissionPhaseIndicator.tsx
 import React from 'react';
+import { Wrench, Rocket, Zap, Flame, Link2, Sparkles, Shield, Square, Orbit, Satellite, SatelliteDish } from 'lucide-react';
 interface MissionPhaseIndicatorProps {
   phase?: string;
 }
@@ -41,40 +42,42 @@ const MissionPhaseIndicator: React.FC<MissionPhaseIndicatorProps> = ({ phase }) 
     }
   };
 
-  const getPhaseInfo = (phaseName: string) => {
+  const getPhaseIcon = (phaseName: string) => {
+    const iconProps = { className: 'w-5 h-5' };
+    
     switch (phaseName.toLowerCase()) {
       case 'pre-launch':
-        return '🔧';
+        return <Wrench {...iconProps} />;
       case 'liftoff':
-        return '🚀';
+        return <Rocket {...iconProps} />;
       case 'max-q':
-        return '⚡';
+        return <Zap {...iconProps} />;
       case 'meco':
-        return '🔥';
+        return <Flame {...iconProps} />;
       case 'stage separation':
-        return '🔗';
+        return <Link2 {...iconProps} />;
       case 'second stage ignition':
-        return '💫';
+        return <Sparkles {...iconProps} />;
       case 'fairing separation':
-        return '🛡️';
+        return <Shield {...iconProps} />;
       case 'seco-1':
-        return '⏹️';
+        return <Square {...iconProps} />;
       case 'coast phase':
-        return '🌌';
+        return <Orbit {...iconProps} />;
       case 'payload deployment':
-        return '🛰️';
+        return <Satellite {...iconProps} />;
       default:
-        return '📡';
+        return <SatelliteDish {...iconProps} />;
     }
   };
 
   const colorClasses = getPhaseColor(phase);
-  const icon = getPhaseInfo(phase);
+  const Icon = () => getPhaseIcon(phase);
 
   return (
     <div className={`flex items-center space-x-3 rounded-lg px-4 py-2 border ${colorClasses}`}>
       <div className="flex items-center space-x-2">
-        <span className="text-lg">{icon}</span>
+        <Icon />
         <div className="w-2 h-2 rounded-full animate-pulse bg-current"></div>
       </div>
       <div>

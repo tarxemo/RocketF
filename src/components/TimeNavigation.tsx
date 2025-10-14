@@ -1,5 +1,6 @@
 // src/components/TimeNavigation.tsx
 import React from 'react';
+import { Rocket, Zap, Flame, Link2, Shield, Square, Satellite, SkipBack, SkipForward, Play, RotateCcw } from 'lucide-react';
 
 interface TimeNavigationProps {
   currentTime: number;
@@ -20,13 +21,13 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
 
   // Mission milestones for timeline markers
   const milestones = [
-    { time: 0, label: 'LIFTOFF', icon: '🚀' },
-    { time: 60, label: 'MAX-Q', icon: '⚡' },
-    { time: 162, label: 'MECO', icon: '🔥' },
-    { time: 168, label: 'SEP', icon: '🔗' },
-    { time: 210, label: 'FAIRING', icon: '🛡️' },
-    { time: 565, label: 'SECO-1', icon: '⏹️' },
-    { time: 1800, label: 'DEPLOY', icon: '🛰️' }
+    { time: 0, label: 'LIFTOFF', icon: <Rocket className="w-3.5 h-3.5" /> },
+    { time: 60, label: 'MAX-Q', icon: <Zap className="w-3.5 h-3.5" /> },
+    { time: 162, label: 'MECO', icon: <Flame className="w-3.5 h-3.5" /> },
+    { time: 168, label: 'SEP', icon: <Link2 className="w-3.5 h-3.5" /> },
+    { time: 210, label: 'FAIRING', icon: <Shield className="w-3.5 h-3.5" /> },
+    { time: 565, label: 'SECO-1', icon: <Square className="w-3.5 h-3.5" /> },
+    { time: 1800, label: 'DEPLOY', icon: <Satellite className="w-3.5 h-3.5" /> }
   ];
 
   const getProgressPercentage = () => (currentTime / maxTime) * 100;
@@ -142,48 +143,46 @@ const TimeNavigation: React.FC<TimeNavigationProps> = ({ currentTime, maxTime, o
         {/* Mobile milestone indicators - Minimal */}
         <div className="lg:hidden mt-1">
           <div className="flex justify-between text-xs">
-            <span className="text-cyan-400">START</span>
-            <span className="text-cyan-400">END</span>
+            <span className="text-sm flex items-center"><Rocket className="w-4 h-4 text-cyan-400" /></span>
+            <span className="text-cyan-400">
+              <Play className="w-4 h-4 inline-block" />
+            </span>
           </div>
         </div>
       </div>
       
-      {/* Timeline Controls - Compact mobile version */}
       <div className="flex items-center justify-center space-x-1 md:space-x-4 mt-1 md:mt-6">
         <button 
           onClick={() => onChange(0)}
           className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="md:hidden">⏮️</span>
-          <span className="hidden md:inline">⏮️ START</span>
+          <span className="md:hidden"><RotateCcw className="w-4 h-4" /></span>
+          <span className="hidden md:inline-flex items-center">
+            <RotateCcw className="w-4 h-4 mr-1" /> RESET
+          </span>
         </button>
         
         <button 
           onClick={() => onChange(Math.max(0, currentTime - 60))}
           className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="md:hidden">⏪</span>
-          <span className="hidden md:inline">⏪ -1MIN</span>
+          <span className="md:hidden"><SkipBack className="w-4 h-4" /></span>
+          <span className="hidden md:inline-flex items-center">
+            <SkipBack className="w-4 h-4 mr-1" /> -1MIN
+          </span>
         </button>
         
         <button 
           onClick={() => onChange(Math.min(maxTime, currentTime + 60))}
           className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
         >
-          <span className="md:hidden">⏩</span>
-          <span className="hidden md:inline">⏩ +1MIN</span>
-        </button>
-        
-        <button 
-          onClick={() => onChange(maxTime)}
-          className="px-1.5 md:px-3 py-0.5 md:py-1 bg-slate-700 hover:bg-slate-600 text-cyan-300 rounded text-xs md:text-sm transition-colors"
-        >
-          <span className="md:hidden">⏭️</span>
-          <span className="hidden md:inline">⏭️ END</span>
+          <span className="md:hidden"><SkipForward className="w-4 h-4" /></span>
+          <span className="hidden md:inline-flex items-center">
+            <SkipForward className="w-4 h-4 mr-1" /> +1MIN
+          </span>
         </button>
       </div>
     </div>
   );
 };
-
 export default TimeNavigation;
