@@ -74,13 +74,11 @@ const EngineTelemetryGraphs: React.FC<EngineTelemetryGraphsProps> = ({
   height = 200,
   timeWindow = 60, // 60 seconds
 }) => {
-  const refs = useMemo(() => {
-    const refsObj: Record<string, React.RefObject<SVGSVGElement | null>> = {};
-    GRAPHS.forEach(graph => {
-      refsObj[graph.id] = React.useRef<SVGSVGElement>(null);
-    });
-    return refsObj;
-  }, []);
+  // Initialize refs at the top level
+  const refs = GRAPHS.reduce((acc, graph) => {
+    acc[graph.id] = React.useRef<SVGSVGElement>(null);
+    return acc;
+  }, {} as Record<string, React.RefObject<SVGSVGElement | null>>);
 
   // Filter data to the specified time window
   const filteredData = React.useMemo(() => {
